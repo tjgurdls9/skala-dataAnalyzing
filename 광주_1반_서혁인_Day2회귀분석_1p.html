@@ -1,0 +1,335 @@
+<title>광주_1반_서혁인 - Day2 회귀분석 실습 (1P 요약)</title>
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#111827;
+    --ink-soft:#585f6e;
+    --navy:#0e1152;
+    --purple:#6c4dff;
+    --blue:#3f51ff;
+    --teal:#2ee6c9;
+    --tint:#ece6ff;
+    --tint-blue:#eef0f5;
+    --border:#dfe2ea;
+    --border-strong:#c3c8d4;
+    --good:#1f8a5f;
+    --good-soft:#e3f3ea;
+    --warn:#b5432f;
+    --warn-soft:#fbe9e5;
+    --grad:linear-gradient(90deg,#6c4dff 0%, #3f51ff 55%, #2ee6c9 100%);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0f1220;
+    --ink:#e7e9f2;
+    --ink-soft:#a3a8bd;
+    --navy:#aab4ff;
+    --purple:#9d84ff;
+    --blue:#8b9bff;
+    --teal:#5be8cf;
+    --tint:#1e1c3a;
+    --tint-blue:#1b2030;
+    --border:#2b3044;
+    --border-strong:#3a405a;
+    --good:#5fd39c;
+    --good-soft:#122a20;
+    --warn:#f0a08e;
+    --warn-soft:#301a16;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0f1220;
+      --ink:#e7e9f2;
+      --ink-soft:#a3a8bd;
+      --navy:#aab4ff;
+      --purple:#9d84ff;
+      --blue:#8b9bff;
+      --teal:#5be8cf;
+      --tint:#1e1c3a;
+      --tint-blue:#1b2030;
+      --border:#2b3044;
+      --border-strong:#3a405a;
+      --good:#5fd39c;
+      --good-soft:#122a20;
+      --warn:#f0a08e;
+      --warn-soft:#301a16;
+    }
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#dde0e6;
+    display:flex;justify-content:center;
+    padding:26px 16px 50px;
+    font-family:"SUIT","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",-apple-system,sans-serif;
+  }
+  @media (prefers-color-scheme: dark){ body{ background:#07080d; } }
+
+  .sheet{
+    background:var(--paper);
+    color:var(--ink);
+    width:210mm;min-height:297mm;max-width:100%;
+    padding:6mm 17mm;
+    box-shadow:0 2px 4px rgba(0,0,0,.10),0 20px 44px rgba(0,0,0,.20);
+    font-size:11.4px;line-height:1.38;
+  }
+
+  h1,h2,h3{margin:0;color:var(--navy);text-wrap:balance;}
+
+  .topbar{height:4px;border-radius:3px;background:var(--grad);margin-bottom:12px;}
+
+  .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;}
+  .head h1{font-size:23px;font-weight:800;letter-spacing:-.3px;}
+  .head .subtitle{font-size:11.6px;color:var(--ink-soft);margin-top:4px;}
+  .meta{
+    text-align:right;font-size:10.2px;color:var(--ink-soft);
+    border-left:3px solid var(--purple);padding:3px 0 3px 12px;line-height:1.85;
+  }
+  .meta b{color:var(--navy);font-weight:700;}
+
+  .flow{display:flex;align-items:center;gap:4px;margin:0 0 9px;flex-wrap:nowrap;}
+  .flow-step{
+    display:flex;align-items:center;gap:4px;font-size:9.2px;font-weight:700;color:var(--navy);
+    background:var(--tint-blue);border:1px solid var(--border);border-radius:100vw;padding:3px 9px 3px 4px;
+    white-space:nowrap;
+  }
+  .flow-step em{
+    font-style:normal;width:15px;height:15px;border-radius:50%;background:var(--grad);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:8.3px;font-weight:800;flex:none;
+  }
+  .flow-arrow{color:var(--teal);font-weight:800;font-size:10.5px;flex:none;}
+
+  .lede{
+    font-size:11.6px;color:var(--ink);
+    margin:0 0 9px;padding:8px 13px;
+    background:var(--tint);border-left:3px solid var(--purple);border-radius:0 6px 6px 0;
+  }
+  .lede b{color:var(--navy);}
+
+  .tag{
+    display:inline-block;font-size:9.8px;font-weight:800;letter-spacing:.05em;
+    color:#fff;background:var(--grad);
+    padding:3.5px 12px;border-radius:100vw;margin-bottom:5px;
+  }
+
+  section{margin-bottom:6px;}
+  section h2{font-size:13.2px;margin-bottom:5px;padding-bottom:3px;border-bottom:1px solid var(--border-strong);}
+
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;}
+  .col p{margin:0 0 4px;font-size:10.3px;font-weight:700;color:var(--navy);}
+  .col ul{margin:0;padding-left:14px;}
+  .col li{margin-bottom:2px;font-size:10.1px;}
+
+  table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;}
+  th,td{padding:3.6px 8px;font-size:10.3px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;}
+  th:first-child,td:first-child{text-align:left;}
+  thead th{background:var(--navy);color:#fff;font-weight:700;font-size:9.2px;text-transform:uppercase;letter-spacing:.02em;border-bottom:none;}
+  tbody tr:nth-child(even){background:var(--tint-blue);}
+  tbody tr:last-child td{border-bottom:1px solid var(--border-strong);font-weight:700;}
+  td.up{color:var(--good);font-weight:800;}
+  td.warn{color:var(--warn);font-weight:800;}
+
+  .badge{display:inline-block;font-size:9px;font-weight:800;padding:1.5px 7px;border-radius:100vw;margin-left:3px;white-space:nowrap;}
+  .badge.ok{background:var(--good-soft);color:var(--good);}
+  .badge.warn{background:var(--warn-soft);color:var(--warn);}
+
+  code{
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;
+    background:var(--tint-blue);color:var(--navy);padding:0 4px;border-radius:2px;
+    white-space:nowrap;
+  }
+
+  .twocol{display:grid;grid-template-columns:1.2fr 1fr;gap:14px;align-items:start;}
+
+  .findings{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .findings h3{font-size:11.4px;margin-bottom:4px;color:var(--purple);}
+  .findings ol{margin:0;padding-left:15px;}
+  .findings li{font-size:10px;margin-bottom:3.5px;}
+  .findings li b{color:var(--navy);}
+
+  .conclusion{
+    margin-top:0px;padding:7px 13px;
+    background:var(--tint);border-left:3px solid var(--teal);border-radius:0 6px 6px 0;
+    font-size:10.3px;
+  }
+  .conclusion b{color:var(--navy);}
+
+  .foot{
+    margin-top:0;padding-top:0;border-top:none;
+    display:flex;justify-content:space-between;font-size:9px;color:var(--ink-soft);
+  }
+
+  @media print{
+    @page{ size:A4; margin:0; }
+    body{ background:none; padding:0; display:block; }
+    .sheet{ box-shadow:none; width:auto; min-height:auto; padding:6mm 17mm; }
+  }
+</style>
+
+<div class="sheet">
+  <div class="topbar"></div>
+
+  <div class="head">
+    <div>
+      <h1>Day2 실습 — 부동산 가격 결정요인 회귀분석</h1>
+      <div class="subtitle">UCI Real Estate Valuation Dataset · Baseline → 잔차진단 → 변수변환 → 변수선택</div>
+    </div>
+    <div class="meta">
+      SKALA · 데이터 분석 및 AIOps<br>
+      <b>광주 1반</b> · <b>서혁인</b> · 담당교수 박병선<br>
+      작성일 <b>2026-07-28</b>
+    </div>
+  </div>
+
+  <div class="flow">
+    <span class="flow-step"><em>1</em>Baseline 적합</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step"><em>2</em>잔차진단 (4대 가정)</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step"><em>3</em>Task2 로그변환</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step"><em>4</em>Task3 변수선택</span>
+    <span class="flow-arrow">→</span>
+    <span class="flow-step"><em>5</em>최종 모델</span>
+  </div>
+
+  <p class="lede">
+    부동산 414건의 실거래가를 6개 변수로 설명하는 OLS 회귀모델을 구축했다.
+    Baseline(R²=0.558) → 로그변환(R²=0.634) → 변수선택(Adj.R²=0.628)의 단계를 거쳐
+    <b>변수는 1개 줄이면서 설명력은 오히려 높인</b> 최종 모델을 도출했다.
+  </p>
+
+  <section>
+    <span class="tag">01 · EDA 요약</span>
+    <div class="cols3">
+      <div class="col">
+        <p>상관관계 (price 기준)</p>
+        <ul>
+          <li><code>dist_to_mrt</code> r=−0.674 (최강)</li>
+          <li><code>n_convenience</code> r=0.571</li>
+          <li><code>latitude</code> r=0.546 · <code>longitude</code> r=0.523</li>
+          <li><code>house_age</code> r=−0.211</li>
+          <li><code>transaction_date</code> r=0.087 (거의 무관)</li>
+        </ul>
+      </div>
+      <div class="col">
+        <p>분포 · 비선형성</p>
+        <ul>
+          <li><code>dist_to_mrt</code> skew=1.89 (최대 치우침)</li>
+          <li>산점도+LOESS: <code>dist_to_mrt</code> 단조 감쇠 곡선</li>
+          <li><code>house_age</code>는 U자형 비단조 곡률</li>
+          <li>price 자체도 고가 이상치 존재</li>
+        </ul>
+      </div>
+      <div class="col">
+        <p>2차항 vs 로그 (quad_gain / log_gain)</p>
+        <ul>
+          <li><code>dist_to_mrt</code>: 0.073 / 0.044 → 로그 적합</li>
+          <li><code>house_age</code>: 0.157 / 0.066 → 2차항 적합(제외)</li>
+          <li>나머지 변수는 비선형성 미미</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="tag">02 · 모델 단계별 비교</span>
+    <table>
+      <thead>
+        <tr><th>지표</th><th>① Baseline (6개)</th><th>② 로그변환</th><th>③ 최종 (−longitude, 5개)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>R²</td><td>0.558</td><td>0.634</td><td class="up">0.634</td></tr>
+        <tr><td>Adjusted R²</td><td>0.550</td><td>0.627</td><td class="up">0.628</td></tr>
+        <tr><td>Train / Test RMSE</td><td>9.117 / 7.315</td><td>8.298 / 6.779</td><td>8.298 / 6.779</td></tr>
+        <tr><td>Prob(F-statistic)</td><td>1.46e-54</td><td>1.09e-67</td><td>9.82e-69</td></tr>
+        <tr><td>Breusch-Pagan p</td><td>0.209</td><td>0.131</td><td>—</td></tr>
+        <tr><td>최대 P&gt;|t|</td><td><code>longitude</code> 0.599</td><td><code>longitude</code> 0.887</td><td><code>n_conv.</code> 0.142 <span class="badge ok">유지</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <span class="tag">03 · 최종 모델 회귀계수 (5변수)</span>
+    <div class="twocol">
+      <table>
+        <thead>
+          <tr><th>변수</th><th>계수</th><th>표준오차</th><th>t값</th><th>P&gt;|t|</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>const</td><td>−19,700.0</td><td>3,446.5</td><td>−5.72</td><td>0.000</td></tr>
+          <tr><td><code>transaction_date</code></td><td>6.320</td><td>1.647</td><td>3.84</td><td>0.000</td></tr>
+          <tr><td><code>house_age</code></td><td>−0.242</td><td>0.041</td><td>−5.89</td><td>0.000</td></tr>
+          <tr><td><code>dist_to_mrt</code> (log1p)</td><td>−7.051</td><td>0.602</td><td>−11.72</td><td>0.000</td></tr>
+          <tr><td><code>n_convenience</code></td><td>0.324</td><td>0.220</td><td>1.47</td><td>0.142 <span class="badge ok">유지</span></td></tr>
+          <tr><td><code>latitude</code></td><td>282.784</td><td>42.176</td><td>6.71</td><td>0.000</td></tr>
+        </tbody>
+      </table>
+      <div>
+        <p style="margin:0 0 6px;font-size:10.3px;font-weight:700;color:var(--navy);">모델 진단 메모</p>
+        <ul style="margin:0;padding-left:15px;">
+          <li style="margin-bottom:4px;font-size:10.1px;">Adjusted R²=0.628, Prob(F-statistic)=9.82e-69 — 모델 전체 유의</li>
+          <li style="margin-bottom:4px;font-size:10.1px;">Cond. No.=1.51e+07 — 좌표형 변수(latitude 등) 스케일 차로 인한 다중공선성 경고는 여전히 존재</li>
+          <li style="margin-bottom:4px;font-size:10.1px;"><code>n_convenience</code>는 p&gt;0.05지만 계수 부호·크기가 baseline과 일관 — 다중공선성으로 해석해 유지</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="tag">04 · 잔차진단 — 선형모형 4대 가정 체크</span>
+    <div class="twocol">
+      <table>
+        <thead>
+          <tr><th>가정</th><th>진단 지표</th><th>Baseline</th><th>최종 모델</th><th>판정</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>선형성</td><td>잔차 vs <code>dist_to_mrt</code></td><td>곡선 패턴</td><td>로그변환 후 완화</td><td><span class="badge ok">개선</span></td></tr>
+          <tr><td>독립성</td><td>Durbin-Watson</td><td>1.923</td><td>2.033</td><td><span class="badge ok">문제없음</span></td></tr>
+          <tr><td>등분산성</td><td>Breusch-Pagan p</td><td>0.209</td><td>0.131</td><td><span class="badge ok">문제없음</span></td></tr>
+          <tr><td>정규성</td><td>Skew / Kurtosis</td><td>2.14 / 17.3</td><td>2.35 / 19.9</td><td><span class="badge warn">위배</span></td></tr>
+        </tbody>
+      </table>
+      <div>
+        <p style="margin:0 0 6px;font-size:10.3px;font-weight:700;color:var(--navy);">해석</p>
+        <ul style="margin:0;padding-left:15px;">
+          <li style="margin-bottom:4px;font-size:10.1px;">선형성·독립성·등분산성은 문제없거나 개선됨</li>
+          <li style="margin-bottom:4px;font-size:10.1px;">정규성만 유일하게 위배 — 소수 초고가 매물(이상치)이 원인으로 추정</li>
+          <li style="margin-bottom:4px;font-size:10.1px;">변수 변환만으로는 해소 불가 → 강건회귀·이상치 처리가 다음 과제</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="findings">
+      <div>
+        <h3>핵심 발견</h3>
+        <ol>
+          <li><b>비선형성 교정 효과가 최대.</b> <code>dist_to_mrt</code> 로그변환만으로 R² 7.6%p 상승(0.558→0.634).</li>
+          <li><b>다중공선성의 함정.</b> 로그변환 후 <code>n_convenience</code> p-value 0.144로 급등했지만, 제거 시 Adj.R² 하락 → 표준오차만 부풀려진 것으로 판단, 유지.</li>
+          <li><b>유의성 ≠ 효과크기.</b> <code>longitude</code>는 제거 시 Adj.R²가 오히려 상승(0.6271→0.6282) — 진짜 무의미 변수.</li>
+          <li>정규성(Skew 2.14·Kurtosis 17.3)은 위배되나 등분산성(BP p=0.209)·독립성(DW 1.923)은 문제없음.</li>
+        </ol>
+      </div>
+      <div>
+        <h3>결론 및 시사점</h3>
+        <ol>
+          <li>최종 모델(5변수, Adj.R²=0.628)은 <code>transaction_date, house_age, dist_to_mrt, n_convenience, latitude</code>로 구성.</li>
+          <li>p-value만으로 변수를 제거하면 <code>n_convenience</code>처럼 실제 설명력 있는 변수를 잃을 위험 — 제거 전 Adj.R² 변화 필수 확인.</li>
+          <li>잔차 곡선 패턴이 변환 대상 선정에 가장 직접적인 신호이며, skewness만으로는 <code>house_age</code>형 비단조 관계를 놓칠 수 있음.</li>
+          <li>남은 이상치·정규성 문제는 강건회귀(robust regression) 등 후속 과제로 남음.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div class="conclusion">
+    <b>종합 결론</b> — Baseline 대비 변수 1개(<code>longitude</code>) 감소, Adjusted R² 0.550 → 0.628 (+7.8%p) 개선. 비선형 변환과 다중공선성 인지가 개선의 핵심이었다.
+  </div>
+
+  <div class="foot">
+    <span>데이터: UCI Real Estate Valuation Data Set (id=477, n=414)</span>
+    <span>실습 파일: 실습_LinearRegression.ipynb</span>
+  </div>
+</div>

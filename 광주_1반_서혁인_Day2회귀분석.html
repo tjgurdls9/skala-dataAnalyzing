@@ -1,0 +1,289 @@
+<title>광주_1반_서혁인 - Day2 회귀분석 실습 (부동산 가격 결정요인)</title>
+<style>
+  :root {
+    --navy: #0e1152;
+    --navy-deep: #020408;
+    --ink: #111827;
+    --purple: #6c4dff;
+    --blue: #3f51ff;
+    --teal: #2ee6c9;
+    --tint: #ece6ff;
+    --tint-blue: #e6eaf0;
+    --border: #dfe2ea;
+    --grad: linear-gradient(90deg, #6c4dff 0%, #3f51ff 100%);
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "SUIT", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    font-size: 16.5px;
+    max-width: 980px;
+    margin: 0 auto 40px;
+    padding: 0 24px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: #ffffff;
+  }
+  h1 {
+    font-size: 27px; color: var(--navy);
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 10px;
+  }
+  h2 { font-size: 21px; margin: 0; padding: 14px 26px; color: #fff; }
+  h3 {
+    font-size: 17px; margin-top: 22px; color: var(--navy);
+    border-bottom: 1px solid var(--border); padding-bottom: 5px;
+  }
+  .meta { border: 1px solid var(--border); border-left: 4px solid var(--navy); padding: 16px 20px; margin: 18px 0; border-radius: 0 10px 10px 0; }
+  .meta dt { font-weight: bold; float: left; width: 118px; clear: left; color: var(--navy); }
+  .meta dd { margin: 0 0 7px 128px; }
+  .toc { border: 1px solid var(--border); border-left: 4px solid var(--purple); padding: 16px 24px; border-radius: 0 10px 10px 0; }
+  .toc strong { color: var(--navy); font-size: 17px; }
+  .toc li { margin: 4px 0; }
+
+  /* ============ 표지 ============ */
+  .cover {
+    margin: 0 -24px;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: #fff;
+    padding: 70px 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow-wrap: break-word;
+  }
+  .cover-tag {
+    display: inline-block; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.28);
+    padding: 7px 18px; border-radius: 100vw; font-size: 13px; letter-spacing: .04em; margin-bottom: 34px;
+    max-width: fit-content;
+  }
+  .cover h1.cover-title { font-size: 72px; line-height: 1.08; font-weight: 800; margin: 0 0 20px; letter-spacing: -1.5px; color: #fff; border-bottom: none; padding-bottom: 0; }
+  .cover-sub { font-size: 26px; opacity: .88; line-height: 1.5; margin: 0 0 30px; }
+  .cover-divider {
+    width: 100%; max-width: 640px; height: 5px; border-radius: 4px;
+    background: linear-gradient(90deg, var(--purple), var(--teal));
+    margin: 0 auto 40px;
+  }
+  .cover-meta {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px 44px;
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.18);
+    border-radius: 16px; padding: 28px 32px; width: 100%; max-width: 640px;
+    margin: 0 auto; text-align: center;
+  }
+  .cover-meta div { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .cover-meta span { font-size: 12.5px; opacity: .6; letter-spacing: .04em; }
+  .cover-meta strong { font-size: 16.5px; font-weight: 700; }
+  .cover-foot { margin: 26px auto 0; max-width: 640px; text-align: center; font-size: 13px; opacity: .5; }
+
+  /* ============ 문항/섹션 박스 ============ */
+  section.question, section.bigsection {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 0 26px 22px;
+    margin: 0 0 42px;
+    background: #fff;
+  }
+  section.question h2 { background: var(--grad); margin: 0 -26px 20px; }
+  section.bigsection h2 { background: var(--navy); margin: 0 -26px 20px; }
+
+  .req { background: var(--tint); border-left: 4px solid var(--purple); padding: 9px 16px; font-size: 16px; margin: 8px 0 16px; color: var(--navy); border-radius: 0 8px 8px 0; }
+  figure { margin: 12px 0 20px; }
+  figcaption { font-size: 14px; color: #555; margin-top: 5px; }
+  table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+  th, td { border: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--navy); color: #fff; }
+  tr:nth-child(even) { background: #f8f8fb; }
+  td.num, th.num { text-align: right; }
+  td.up { color: #1f8a5f; font-weight: 700; }
+  td.warn { color: #b5432f; font-weight: 700; }
+  code { background: var(--tint-blue); padding: 1px 6px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 14.5px; color: var(--navy); }
+  pre { background: var(--navy); color: #f2f2f5; padding: 16px; border-radius: 8px; overflow-x: auto; font-size: 14px; }
+  .note { background: var(--tint-blue); border-left: 4px solid var(--navy); padding: 12px 18px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .summary { background: var(--tint); border-left: 4px solid var(--purple); padding: 12px 18px; margin: 16px 0; border-radius: 0 8px 8px 0; }
+  .badge { display:inline-block; font-size: 12.5px; padding: 1px 9px; border-radius: 100vw; font-weight: 700; margin-left: 6px; }
+  .badge.ok { background: #e3f3ea; color: #1f8a5f; }
+  .badge.warn { background: #fbe9e5; color: #b5432f; }
+  hr.sep { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+  @media print {
+    .cover { break-after: page; min-height: 267mm; }
+    section.question, section.bigsection { break-before: page; }
+    section.question:first-of-type { break-before: avoid; }
+  }
+</style>
+
+<section class="cover">
+  <div class="cover-tag">SKALA · SK AI Leader Academy — 데이터 분석 및 AIOps</div>
+  <h1 class="cover-title">Day2 실습</h1>
+  <p class="cover-sub">부동산 가격 결정요인 회귀분석<br>Baseline → 잔차진단 → 변수변환 → 변수선택</p>
+  <div class="cover-divider"></div>
+  <div class="cover-meta">
+    <div><span>과목</span><strong>데이터 분석 및 AIOps</strong></div>
+    <div><span>반</span><strong>광주 1반</strong></div>
+    <div><span>작성자</span><strong>서혁인</strong></div>
+    <div><span>작성일</span><strong>2026-07-28</strong></div>
+    <div><span>담당교수</span><strong>박병선 교수님</strong></div>
+    <div><span>제출 파일명</span><strong>광주_1반_서혁인_Day2회귀분석.pdf</strong></div>
+  </div>
+  <div class="cover-foot">본 문서는 Jupyter Notebook(statsmodels OLS) 환경에서 직접 실행/검증한 결과를 기반으로 작성되었습니다.</div>
+</section>
+
+<h1>Day2 실습 — 부동산 가격 결정요인 회귀분석</h1>
+
+<div class="meta">
+  <dl>
+    <dt>파일명</dt><dd>광주_1반_서혁인_Day2회귀분석.pdf</dd>
+    <dt>프로그램 설명</dt><dd>SKALA Day2 회귀분석 실습 Task1~3 (Baseline 해석 · 모델 개선 · 변수 선택) 전 과정 정리</dd>
+    <dt>설명 비고</dt><dd>모든 회귀모델은 statsmodels OLS로 직접 적합/검증한 결과이며, 원본 노트북은 별도 첨부파일(실습_LinearRegression.ipynb)로 함께 제출함</dd>
+    <dt>사용 데이터</dt><dd>UCI Real Estate Valuation Data Set (id=477), n=414, features=6, target=price(평당 가격)</dd>
+    <dt>작성자</dt><dd>서혁인 (광주 1반)</dd>
+  </dl>
+</div>
+
+<div class="toc">
+  <strong>목차</strong>
+  <ol>
+    <li>EDA 및 Baseline 회귀모델</li>
+    <li>Task1. Baseline 회귀분석 결과 해석</li>
+    <li>Task2. 로그변환을 통한 모델 개선</li>
+    <li>Task3. 통계적 유의성 vs 효과크기 — 변수 선택</li>
+  </ol>
+</div>
+
+<hr class="sep">
+
+<!-- ============================================================ -->
+<!-- 1. EDA & Baseline -->
+<!-- ============================================================ -->
+<section class="bigsection">
+<h2>1. EDA 및 Baseline 회귀모델</h2>
+<div class="req">요구사항: 6개 변수(거래일·건물연령·역거리·편의시설수·위도·경도)로 평당 가격(price)을 설명하는 Baseline 모델 구축 및 잔차진단</div>
+
+<h3>1-1. 상관분석 (price 기준)</h3>
+<table>
+  <thead><tr><th>변수</th><th class="num">상관계수 r</th><th>해석</th></tr></thead>
+  <tbody>
+    <tr><td><code>dist_to_mrt</code></td><td class="num">−0.674</td><td>역세권일수록 비쌈 (최강 상관)</td></tr>
+    <tr><td><code>n_convenience</code></td><td class="num">0.571</td><td>편의시설 많을수록 비쌈</td></tr>
+    <tr><td><code>latitude</code></td><td class="num">0.546</td><td>위치 프록시</td></tr>
+    <tr><td><code>longitude</code></td><td class="num">0.523</td><td>위치 프록시</td></tr>
+    <tr><td><code>house_age</code></td><td class="num">−0.211</td><td>오래될수록 약간 저렴</td></tr>
+    <tr><td><code>transaction_date</code></td><td class="num">0.087</td><td>거의 무관 (거래기간이 짧음)</td></tr>
+  </tbody>
+</table>
+<figcaption>산점도+LOESS 확인 결과 <code>dist_to_mrt</code>가 단조 감쇠 곡선(skew=1.89, 최대 치우침)을 보여 선형성 위배가 의심되는 1순위 변수로 확인됨.</figcaption>
+
+<h3>1-2. Baseline OLS 결과 (statsmodels)</h3>
+<table>
+  <thead><tr><th>지표</th><th class="num">값</th></tr></thead>
+  <tbody>
+    <tr><td>R² / Adjusted R²</td><td class="num">0.558 / 0.550</td></tr>
+    <tr><td>Train RMSE / Test RMSE</td><td class="num">9.117 / 7.315</td></tr>
+    <tr><td>Prob (F-statistic)</td><td class="num">1.46e-54</td></tr>
+    <tr><td>가장 큰 P&gt;|t| 변수</td><td class="num"><code>longitude</code> = 0.599 <span class="badge warn">비유의</span></td></tr>
+    <tr><td>Skew / Kurtosis (잔차)</td><td class="num">2.14 / 17.3</td></tr>
+    <tr><td>Breusch-Pagan p-value</td><td class="num">0.209 <span class="badge ok">등분산성 OK</span></td></tr>
+    <tr><td>Durbin-Watson</td><td class="num">1.923 <span class="badge ok">독립성 OK</span></td></tr>
+  </tbody>
+</table>
+<figcaption>잔차진단 요약 — 선형성(dist_to_mrt 곡선)·정규성(Skew/Kurtosis) 위배, 등분산성·독립성은 문제없음.</figcaption>
+</section>
+
+<!-- ============================================================ -->
+<!-- Task 1 -->
+<!-- ============================================================ -->
+<section class="question">
+<h2>Task1. Baseline 회귀분석 결과 해석</h2>
+<div class="req">요구사항: EDA·잔차분석 결과를 함께 고려하여 Baseline 모델의 회귀분석 결과를 자신의 언어로 해석</div>
+
+<p>
+EDA에서 위치·거리·편의시설이 가격과 강하게 관련되어 있음을 확인하였다(<code>dist_to_mrt</code> r=−0.67, <code>n_convenience</code> r=0.57, <code>latitude</code> r=0.55).
+Baseline 모델은 이를 반영해 R²=0.558(Adj. R²=0.550) 수준의 설명력을 보였고, <code>longitude</code>(p=0.599)를 제외한 모든 변수가 유의했다(p&lt;0.05).
+F-statistic의 Prob(F-statistic)=1.46e-54로 극히 작아, 모델 전체(6개 변수 조합)가 price를 설명하는 데 통계적으로 유의함도 확인된다.
+</p>
+<p>
+잔차진단 결과, Skew=2.14 / Kurtosis=17.3으로 정규성 가정이 뚜렷하게 위배되어 있어 극단적인 이상치(초고가 매물 등)가 존재하는 것으로 보인다.
+다만 Breusch-Pagan 검정 p-value=0.209(&gt;0.05)로 이분산성 문제는 통계적으로 확인되지 않았다 — 잔차산점도에서 예측값이 클수록 퍼짐이 커 보이는 인상과는 달리,
+검정상으로는 등분산 가정이 기각되지 않는다는 점이 흥미롭다. 한편 변수별 잔차 패턴에서는 <code>dist_to_mrt</code>가 특정 구간에서 체계적인 곡선 패턴을 보여,
+이 변수와 price의 관계가 선형이 아님을 시사한다. 추가로 Durbin-Watson=1.923으로 2에 가까워 잔차의 자기상관(독립성 위배)은 뚜렷하지 않다(개별 거래건 데이터라 애초에 위배 가능성이 낮음).
+</p>
+<div class="summary">
+종합하면, 현재 모델은 위치·거리·편의시설이라는 핵심 요인을 유의하게 포착하고 있으나 (1) <code>dist_to_mrt</code>의 비선형 관계, (2) 이상치로 인한 잔차 비정규성,
+(3) <code>longitude</code>의 통계적 무의미함이라는 세 가지 개선 여지를 갖고 있다. 따라서 <code>dist_to_mrt</code> 변환(Task2)과 <code>longitude</code> 제거(Task3)를 통해
+모델을 다듬을 수 있을 것으로 보인다.
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Task 2 -->
+<!-- ============================================================ -->
+<section class="question">
+<h2>Task2. 로그변환을 통한 모델 개선</h2>
+<div class="req">요구사항: 잔차에 패턴을 만든 변수를 변환하여 성능을 개선하고, 개선 전후를 비교</div>
+
+<pre>log_features = ['dist_to_mrt']   # log1p 변환
+
+# 선정 근거
+# - EDA(산점도+LOESS): dist_to_mrt가 단조 감쇠 곡선 → 로그변환 적합
+# - skew=1.89로 6개 변수 중 최대 치우침
+# - quad_gain(0.073) · log_gain(0.044) 모두 확인 → 단조적 비선형
+#
+# house_age는 quad_gain(0.157) >> log_gain(0.066)로 U자형에 가까운
+# 비단조 곡률이라 로그변환 대상에서 제외 (2차항이 더 적합한 케이스)</pre>
+
+<h3>Before / After 비교</h3>
+<table>
+  <thead><tr><th>지표</th><th class="num">Before (Baseline)</th><th class="num">After (로그변환)</th></tr></thead>
+  <tbody>
+    <tr><td>R²</td><td class="num">0.558</td><td class="num up">0.634</td></tr>
+    <tr><td>Adjusted R²</td><td class="num">0.550</td><td class="num up">0.627</td></tr>
+    <tr><td>Train RMSE</td><td class="num">9.117</td><td class="num up">8.298</td></tr>
+    <tr><td>Test RMSE</td><td class="num">7.315</td><td class="num up">6.779</td></tr>
+    <tr><td>Prob(F-statistic)</td><td class="num">1.46e-54</td><td class="num">1.09e-67</td></tr>
+    <tr><td>Breusch-Pagan p-value</td><td class="num">0.209</td><td class="num">0.131</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+<strong>설명력 개선</strong> — <code>dist_to_mrt</code> 하나만 변환했는데도 R²가 0.558→0.634로 7.6%p 상승. 이 변수의 비선형성이 baseline 오차의 큰 원인이었음을 확인.
+</div>
+<div class="note">
+<strong>예상치 못한 부작용</strong> — <code>n_convenience</code>의 p-value가 &lt;0.001 → 0.144로 유의성을 잃음. <code>dist_to_mrt</code>와 <code>n_convenience</code>가 서로 상관되어(역세권일수록 편의시설도 많은 경향) 있어,
+<code>dist_to_mrt</code>를 더 잘 선형화하면서 다중공선성이 드러난 것으로 해석 — Task3에서 재검증.
+</div>
+</section>
+
+<!-- ============================================================ -->
+<!-- Task 3 -->
+<!-- ============================================================ -->
+<section class="question">
+<h2>Task3. 통계적 유의성 vs 효과크기 — 변수 선택</h2>
+<div class="req">요구사항: 유의하지 않은 변수를 제거하고, 통계적 유의성(p-value)과 효과크기(Adjusted R² 기여도) 관점에서 효과를 비교</div>
+
+<p>Task2 모델 기준 <code>longitude</code>(p=0.887)와 <code>n_convenience</code>(p=0.142)가 모두 5% 유의수준을 통과하지 못했다. 어느 쪽을 제거해야 할지 판단하기 위해 4가지 시나리오의 Adjusted R²를 비교했다.</p>
+
+<table>
+  <thead><tr><th>시나리오</th><th class="num">변수 수</th><th class="num">Adjusted R²</th><th>판정</th></tr></thead>
+  <tbody>
+    <tr><td>Full (baseline)</td><td class="num">6</td><td class="num">0.6271</td><td>—</td></tr>
+    <tr><td>− <code>longitude</code></td><td class="num">5</td><td class="num up">0.6282 ▲</td><td><span class="badge ok">제거 타당</span></td></tr>
+    <tr><td>− <code>n_convenience</code></td><td class="num">5</td><td class="num warn">0.6258 ▼</td><td><span class="badge warn">제거 시 손실</span></td></tr>
+    <tr><td>− 둘 다</td><td class="num">4</td><td class="num">0.6269</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<div class="note">
+<strong><code>longitude</code> 제거</strong> — Adjusted R²가 오히려 0.6271→0.6282로 <em>상승</em>. 통계적으로 무의미(p=0.887)한 변수를 빼면서 페널티가 줄어든 결과로, 효과크기도 사실상 0임을 재확인 → <b>제거가 타당</b>.
+</div>
+<div class="note">
+<strong><code>n_convenience</code> 유지</strong> — p-value(0.142)만 보면 비유의하지만, 제거 시 Adjusted R²가 0.6271→0.6258로 하락. 즉 실질적 설명력(효과크기)은 남아있음 — 높은 p-value는 <code>dist_to_mrt</code>와의 다중공선성으로 표준오차가 부풀려진 결과로 해석 → <b>유지</b>.
+</div>
+
+<div class="summary">
+<strong>결론</strong> — <code>longitude</code>만 제거한 5변수 모델(Adj. R²=0.628)을 최종 채택한다. p-value가 크다고 반드시 변수를 빼야 하는 것은 아니며,
+제거 전후 Adjusted R² 변화(효과크기)와 계수의 이론적 타당성까지 함께 봐야 한다는 점을 이번 실습에서 직접 확인했다.
+</div>
+</section>
