@@ -5,3 +5,6 @@ __pycache__/
 
 # 강사 배포 강의자료
 2) 데이터분석 및 AIOps_2.데이터 분석 개요 및 기초통계_Day2_박병선p.pdf
+
+# Course materials and supplied teaching templates stay local.
+/실습_*.ipynb
